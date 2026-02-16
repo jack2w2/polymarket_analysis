@@ -4,24 +4,17 @@ Analysis tool for Polymarket BTC prediction market data.
 
 ## Overview
 
-This repository provides a Python script to analyze daily CSV files containing Polymarket BTC prediction market data. The script automatically detects cycles in the price data and provides comprehensive statistics.
+This repository provides a Python script to analyze daily CSV files containing Polymarket BTC prediction market data. The script groups data into fixed 5/15-minute cycles, validates data quality, and estimates strategy price levels.
 
 ## Features
 
 - **Auto-detection** of CSV files matching patterns: `BTC5MIN_*.csv`, `BTC_*.csv`, etc.
-- **Cycle detection** based on price resets around 0.50
-- **Detailed analysis** for each cycle including:
-  - Start/end times and prices
-  - Outcome (YES/NO/UNDETERMINED)
-  - Price ranges and data point counts
-- **Summary statistics** including:
-  - Win rates for YES/NO strategies
-  - Average cycle duration
-  - Average data points per cycle
+- **Fixed 5/15-minute cycle grouping** and data validity checks
+- **Strategy price estimation** for levels A-K
+- **Chinese output** summarizing cycle quality and strategy stats
 - **Edge case handling**:
-  - `none` values in price column (automatically skipped)
-  - Incomplete cycles at file boundaries
-  - Irregular timestamps
+  - `none` values in price column (counted as invalid)
+  - Missing per-second data within a cycle (invalid if >5%)
 
 ## Installation
 
@@ -38,7 +31,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-### Analyze all CSV files in current directory:
+### Analyze all CSV files in current directory (default 5-minute cycles):
 ```bash
 python analyze.py
 ```
@@ -48,9 +41,9 @@ python analyze.py
 python analyze.py --date 2026-02-14
 ```
 
-### Analyze a specific file:
+### Analyze a specific file (15-minute cycles):
 ```bash
-python analyze.py --file BTC5MIN_2026-02-14.csv
+python analyze.py --file BTC5MIN_2026-02-14.csv --interval 15
 ```
 
 ### Get help:
@@ -70,7 +63,7 @@ time,price
 ```
 
 - **time**: Timestamp in UTC+8 timezone
-- **price**: Market probability between 0.01 and 0.99
+- **price**: Market probability between 0.01 and 0.99 (invalid entries may be `none`)
 
 ## Expected File Patterns
 
